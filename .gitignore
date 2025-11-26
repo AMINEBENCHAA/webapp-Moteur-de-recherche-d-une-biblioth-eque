@@ -1,4 +1,5 @@
 gutenberg_books/
 index.json
+books_list.json
 jaccard_graph.gpickle
 .venv/

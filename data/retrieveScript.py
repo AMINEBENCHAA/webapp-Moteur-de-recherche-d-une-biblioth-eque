@@ -1,6 +1,7 @@
 import os
 import requests
 import time
+import re
 
 TARGET_BOOKS = 1664
 SAVE_DIR = "gutenberg_books"
@@ -23,10 +24,40 @@ def download_book(book_id):
         pass
 
     return None
+def extract_title(text):
+    """
+    Extrait le titre et l'auteur depuis l'entête Gutenberg.
+    Retourne une chaîne formatée 'Auteur - Titre' pour le nom du fichier.
+    """
+    # Extraire le titre
+    title_match = re.search(r'^Title:\s*(.+)', text, re.MULTILINE)
+    if title_match:
+        title = title_match.group(1).strip()
+    else:
+        title = None
 
+    # Extraire l'auteur
+    author_match = re.search(r'^Author:\s*(.+)', text, re.MULTILINE)
+    if author_match:
+        author = author_match.group(1).strip()
+    else:
+        author = None
 
+    # Créer un nom de fichier sûr
+    if title and author:
+        filename = f"{author} - {title}.txt"
+    elif title:
+        filename = title
+    else:
+        filename = None
+
+    # Supprimer les caractères interdits dans les noms de fichiers
+    if filename:
+        filename = re.sub(r'[\\/*?:"<>|]', '', filename)
+
+    return filename
 count_valid = 0
-book_id = 180
+book_id = 0
 
 print("🚀 Début du téléchargement...")
 
@@ -36,7 +67,7 @@ while count_valid < TARGET_BOOKS:
     if text:
         word_count = len(text.split())
         if word_count >= MIN_WORDS:
-            filename = os.path.join(SAVE_DIR, f"book_{book_id}.txt")
+            filename = os.path.join(SAVE_DIR, extract_title(text))
             with open(filename, "w", encoding="utf-8") as f:
                 f.write(text)
 

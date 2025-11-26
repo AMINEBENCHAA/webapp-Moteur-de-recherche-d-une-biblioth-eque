@@ -15,7 +15,7 @@ CORS(app)
 print("⏳ Chargement des données...")
 
 # Charger l'index amélioré
-with open("index_improved.json", "r", encoding="utf-8") as f:
+with open("index.json", "r", encoding="utf-8") as f:
     INDEX = json.load(f)
 
 # Charger la liste des livres
