@@ -2,7 +2,7 @@ import json
 import re
 import pickle
 import networkx as nx
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify , send_from_directory
 from flask_cors import CORS
 from collections import defaultdict
 from unicodedata import normalize
@@ -253,6 +253,31 @@ def get_book(filename):
         "graph_degree": degree,
         "in_graph": filename in GRAPH
     })
+##download book
+@app.route("/download/<filename>", methods=["GET"])
+def download_book(filename):
+    """Télécharge le fichier texte d'un livre"""
+
+    # Vérifier si le fichier existe
+    if filename not in BOOKS_LIST:
+        return jsonify({"error": "Livre non trouvé"}), 404
+
+    # Chemin du dossier où sont stockés les livres
+    books_folder = "/home/amine/Desktop/webapp-Moteur-de-recherche-d-une-biblioth-eque/gutenberg_books"  # <-- à adapter selon ta structure
+
+    try:
+        # Envoie le fichier en téléchargement
+        return send_from_directory(
+            directory=books_folder,
+            path=filename,
+            as_attachment=True,
+            download_name=f"{filename}.txt"
+        )
+    except FileNotFoundError:
+        return jsonify({"error": "Fichier introuvable dans le dossier"}), 404
+
+
+
 
 @app.route("/stats", methods=["GET"])
 def stats():

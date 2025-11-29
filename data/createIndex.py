@@ -43,7 +43,7 @@ def build_index():
     book_list = []
     
     for filename in sorted(os.listdir(DATA_DIR)):
-        if filename.endswith(".txt"):
+        if filename.endswith(""):
             filepath = os.path.join(DATA_DIR, filename)
             print(f"  📖 Indexation : {filename}")
             

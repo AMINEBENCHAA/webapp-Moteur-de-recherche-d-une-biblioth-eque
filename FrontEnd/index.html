@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Search Engine</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen">
+    <!-- Hero Section -->
+    <div id="heroSection" class="flex flex-col items-center justify-center min-h-screen px-4 transition-all duration-700">
+        <div class="text-center mb-12 animate-fade-in">
+            <div class="flex items-center justify-center gap-3 mb-4">
+                <svg class="w-12 h-12 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                </svg>
+                <h1 class="text-6xl md:text-7xl font-thin text-slate-800 tracking-tight">BookSearch</h1>
+            </div>
+            <p class="text-slate-500 text-lg">Explorez votre bibliothèque intelligemment</p>
+        </div>
+
+        <!-- Search Box -->
+        <div class="w-full max-w-3xl">
+            <div class="relative">
+                <div class="bg-white rounded-2xl shadow-2xl shadow-slate-300/50 p-2 mb-6 hover:shadow-3xl transition-all duration-300">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-6 h-6 text-slate-400 ml-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                        <input 
+                            type="text" 
+                            id="searchInput" 
+                            placeholder="Rechercher un livre, un mot, une expression..." 
+                            class="flex-1 px-4 py-5 text-lg focus:outline-none bg-transparent"
+                            autocomplete="off"
+                        >
+                        
+                    </div>
+                </div>
+
+                <!-- Autocomplete Dropdown -->
+                <div id="autocompleteDropdown" class="hidden absolute z-50 w-full bg-white rounded-xl shadow-2xl mt-2 max-h-96 overflow-y-auto">
+                    <div id="autocompleteResults" class="py-2"></div>
+                </div>
+            </div>
+
+            <!-- Options -->
+            <div class="flex flex-wrap items-center justify-center gap-4 mb-8">
+                <div class="flex items-center gap-3 bg-white px-5 py-3 rounded-full shadow-md">
+                    <label class="flex items-center gap-2 cursor-pointer text-sm text-slate-700">
+                        <input type="radio" name="searchType" value="simple" checked class="w-4 h-4 text-slate-600">
+                        <span>Simple</span>
+                    </label>
+                    <div class="w-px h-4 bg-slate-300"></div>
+                    <label class="flex items-center gap-2 cursor-pointer text-sm text-slate-700">
+                        <input type="radio" name="searchType" value="regex" class="w-4 h-4 text-slate-600">
+                        <span>RegEx</span>
+                    </label>
+                </div>
+
+                <select id="rankingType" class="px-5 py-3 bg-white border-0 rounded-full shadow-md text-sm text-slate-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-slate-400">
+                    <option value="hybrid">🎯 Classement Hybride</option>
+                    <option value="occurrences">📊 Par Occurrences</option>
+                    <option value="pagerank">⭐ Par PageRank</option>
+                </select>
+
+                <button 
+                    onclick="getSuggestions()" 
+                    class="px-5 py-3 bg-gradient-to-r from-slate-600 to-slate-700 text-white rounded-full shadow-md hover:shadow-lg transition-all duration-200 text-sm font-medium"
+                >
+                    ✨ Suggestions
+                </button>
+            </div>
+
+            <!-- Stats Pills -->
+            <div id="statsBar" class="flex flex-wrap justify-center gap-3">
+                <!-- Stats will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Section -->
+    <div id="resultsSection" class="hidden min-h-screen px-4 py-12">
+        <div class="max-w-5xl mx-auto">
+            <!-- Back Button -->
+            <button 
+                onclick="goBack()" 
+                class="mb-8 flex items-center gap-2 text-slate-600 hover:text-slate-800 transition-colors group"
+            >
+                <svg class="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+                <span class="font-medium">Retour</span>
+            </button>
+
+            <!-- Results Header -->
+            <div id="resultsHeader" class="mb-8"></div>
+
+            <!-- Results Cards -->
+            <div id="resultsCards" class="space-y-4"></div>
+
+            <!-- Loading -->
+            <div id="loading" class="hidden text-center py-16">
+                <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-slate-200 border-t-slate-700"></div>
+                <p class="text-slate-500 mt-4">Recherche en cours...</p>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @keyframes fade-in {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fade-in 0.8s ease-out;
+        }
+        input[type="radio"]:checked {
+            accent-color: #334155;
+        }
+        #autocompleteDropdown::-webkit-scrollbar {
+            width: 8px;
+        }
+        #autocompleteDropdown::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+        #autocompleteDropdown::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        #autocompleteDropdown::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+
+    <script>
+        const API_URL = 'https://educated-represent-angela-subsidiary.trycloudflare.com';  
+        let autocompleteTimeout = null;
+        let vocabularyCache = [];
+
+        async function search() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) return;
+
+            hideAutocomplete();
+            const searchType = document.querySelector('input[name="searchType"]:checked').value;
+            const ranking = document.getElementById('rankingType').value;
+
+            showResults();
+            showLoading(true);
+            document.getElementById('resultsCards').innerHTML = '';
+
+            try {
+                let url;
+                if (searchType === 'simple') {
+                    url = `${API_URL}/search?query=${encodeURIComponent(query)}&ranking=${ranking}`;
+                } else {
+                    url = `${API_URL}/advanced-search?regex=${encodeURIComponent(query)}&ranking=${ranking}`;
+                }
+
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data.error) {
+                    showError(data.error);
+                    return;
+                }
+
+                displayResults(data);
+            } catch (error) {
+                showError('Impossible de se connecter au serveur. Vérifiez que le backend est démarré.');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        async function getSuggestions() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) return;
+
+            hideAutocomplete();
+            showResults();
+            showLoading(true);
+            document.getElementById('resultsCards').innerHTML = '';
+
+            try {
+                const response = await fetch(`${API_URL}/suggestions?query=${encodeURIComponent(query)}&top_n=10`);
+                const data = await response.json();
+
+                if (data.error) {
+                    showError(data.error);
+                    return;
+                }
+
+                displaySuggestions(data);
+            } catch (error) {
+                showError('Impossible de se connecter au serveur. Vérifiez que le backend est démarré.');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Autocomplete functionality
+        async function loadVocabulary() {
+            try {
+                const response = await fetch(`${API_URL}/stats`);
+                const data = await response.json();
+                // In a real implementation, you'd have an endpoint that returns the vocabulary
+                // For now, we'll simulate with an empty array
+                vocabularyCache = [];
+            } catch (error) {
+                console.log('Could not load vocabulary');
+            }
+        }
+
+        function showAutocomplete(suggestions) {
+            const dropdown = document.getElementById('autocompleteDropdown');
+            const resultsDiv = document.getElementById('autocompleteResults');
+            
+            if (suggestions.length === 0) {
+                hideAutocomplete();
+                return;
+            }
+
+            let html = '';
+            suggestions.forEach((suggestion, index) => {
+                html += `
+                    <div class="px-6 py-3 hover:bg-slate-50 cursor-pointer transition-colors flex items-center gap-3 group"
+                         onclick="selectSuggestion('${suggestion.replace(/'/g, "\\'")}')">
+                        <svg class="w-4 h-4 text-slate-400 group-hover:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                        <span class="text-slate-700 group-hover:text-slate-900">${suggestion}</span>
+                    </div>
+                `;
+            });
+
+            resultsDiv.innerHTML = html;
+            dropdown.classList.remove('hidden');
+        }
+
+        function hideAutocomplete() {
+            document.getElementById('autocompleteDropdown').classList.add('hidden');
+        }
+
+        function selectSuggestion(text) {
+            document.getElementById('searchInput').value = text;
+            hideAutocomplete();
+            search();
+        }
+
+        async function handleAutocomplete(query) {
+            if (query.length < 2) {
+                hideAutocomplete();
+                return;
+            }
+
+            // Clear previous timeout
+            if (autocompleteTimeout) {
+                clearTimeout(autocompleteTimeout);
+            }
+
+            // Set new timeout
+            autocompleteTimeout = setTimeout(async () => {
+                try {
+                    // Use advanced search to find matching words
+                    const response = await fetch(`${API_URL}/advanced-search?regex=^${encodeURIComponent(query)}&ranking=hybrid`);
+                    const data = await response.json();
+
+                    if (data.matching_words && data.matching_words.length > 0) {
+                        showAutocomplete(data.matching_words.slice(0, 8));
+                    } else {
+                        hideAutocomplete();
+                    }
+                } catch (error) {
+                    console.log('Autocomplete failed');
+                    hideAutocomplete();
+                }
+            }, 300);
+        }
+
+        function downloadBook(filename) {
+            window.open(`${API_URL}/download/${encodeURIComponent(filename)}`, '_blank');
+        }
+
+        function displayResults(data) {
+            const header = document.getElementById('resultsHeader');
+            const cards = document.getElementById('resultsCards');
+            
+            if (data.count === 0) {
+                header.innerHTML = `
+                    <div class="text-center py-8">
+                        <div class="text-6xl mb-4">📚</div>
+                        <h2 class="text-2xl font-light text-slate-800 mb-2">Aucun résultat trouvé</h2>
+                        <p class="text-slate-500">Essayez avec d'autres mots clés</p>
+                    </div>
+                `;
+                return;
+            }
+
+            header.innerHTML = `
+                <div class="bg-white rounded-2xl shadow-lg p-8 mb-6">
+                    <div class="flex items-center justify-between flex-wrap gap-4">
+                        <div>
+                            <h2 class="text-3xl font-light text-slate-800 mb-2">
+                                ${data.count.toLocaleString()} résultat${data.count > 1 ? 's' : ''}
+                            </h2>
+                            <p class="text-slate-500">
+                                Pour <span class="font-medium text-slate-700">"${data.query || data.regex}"</span>
+                            </p>
+                        </div>
+                        <div class="px-4 py-2 bg-slate-100 rounded-full text-sm text-slate-700">
+                            ${getRankingLabel(data.ranking_type)}
+                        </div>
+                    </div>
+                    ${data.matching_words ? `
+                        <div class="mt-6 pt-6 border-t border-slate-200">
+                            <p class="text-sm text-slate-600 mb-3">Mots correspondants :</p>
+                            <div class="flex flex-wrap gap-2">
+                                ${data.matching_words.map(w => `
+                                    <span class="px-3 py-1 bg-gradient-to-r from-slate-100 to-slate-200 text-slate-700 rounded-full text-sm">
+                                        ${w}
+                                    </span>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+
+            let html = '';
+            data.results.forEach((book, index) => {
+                html += `
+                    <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 p-6 group" style="animation: fade-in 0.5s ease-out ${index * 0.05}s both;">
+                        <div class="flex items-start justify-between gap-4">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <span class="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 text-slate-700 text-sm font-medium">
+                                        ${index + 1}
+                                    </span>
+                                    <h3 class="text-lg text-slate-800 font-medium group-hover:text-slate-600 transition-colors">
+                                        ${book.filename}
+                                    </h3>
+                                </div>
+                                <div class="flex flex-wrap gap-4 mb-4">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-2xl">📊</span>
+                                        <div>
+                                            <p class="text-xs text-slate-500">Occurrences</p>
+                                            <p class="text-lg font-semibold text-slate-800">${book.occurrences}</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-2xl">⭐</span>
+                                        <div>
+                                            <p class="text-xs text-slate-500">PageRank</p>
+                                            <p class="text-lg font-semibold text-slate-800">${book.pagerank}</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-2xl">🎯</span>
+                                        <div>
+                                            <p class="text-xs text-slate-500">Score</p>
+                                            <p class="text-lg font-semibold text-slate-800">${book.score.toFixed(2)}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button 
+                                    onclick="downloadBook('${book.filename}')"
+                                    class="flex items-center gap-2 px-4 py-2 bg-slate-800 text-white rounded-lg hover:bg-slate-700 transition-colors text-sm font-medium"
+                                >
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                                    </svg>
+                                    Télécharger
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            cards.innerHTML = html;
+        }
+
+        function displaySuggestions(data) {
+            const header = document.getElementById('resultsHeader');
+            const cards = document.getElementById('resultsCards');
+            
+            header.innerHTML = `
+                <div class="bg-gradient-to-r from-slate-800 to-slate-700 rounded-2xl shadow-lg p-8 text-white">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="text-3xl">✨</span>
+                        <h2 class="text-3xl font-light">Suggestions intelligentes</h2>
+                    </div>
+                    <p class="text-slate-200">Basées sur votre recherche : <span class="font-medium">"${data.query}"</span></p>
+                </div>
+            `;
+
+            let html = '';
+
+            if (data.top_results.length > 0) {
+                html += `
+                    <div class="bg-gradient-to-br from-blue-50 to-slate-50 rounded-xl shadow-md p-6 border border-blue-100">
+                        <h3 class="text-xl font-medium text-slate-800 mb-4 flex items-center gap-2">
+                            <span>🏆</span> Meilleurs résultats
+                        </h3>
+                        <div class="space-y-3">
+                            ${data.top_results.map((book, i) => `
+                                <div class="bg-white rounded-lg p-4 shadow-sm">
+                                    <div class="flex items-center justify-between gap-3 mb-2">
+                                        <div class="flex items-center gap-3">
+                                            <span class="flex items-center justify-center w-6 h-6 rounded-full bg-blue-100 text-blue-700 text-xs font-bold">
+                                                ${i + 1}
+                                            </span>
+                                            <p class="font-medium text-slate-800">${book.filename}</p>
+                                        </div>
+                                        <button 
+                                            onclick="downloadBook('${book.filename}')"
+                                            class="flex items-center gap-1 px-3 py-1 bg-slate-800 text-white rounded-lg hover:bg-slate-700 transition-colors text-xs"
+                                        >
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                                            </svg>
+                                            Télécharger
+                                        </button>
+                                    </div>
+                                    <div class="flex gap-4 text-sm text-slate-600">
+                                        <span>Score: <strong>${book.score.toFixed(2)}</strong></span>
+                                        <span>PageRank: <strong>${book.pagerank}</strong></span>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (data.suggestions.length > 0) {
+                html += `
+                    <div class="bg-white rounded-xl shadow-md p-6 mt-4">
+                        <h3 class="text-xl font-medium text-slate-800 mb-4 flex items-center gap-2">
+                            <span>🔗</span> Livres similaires
+                        </h3>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            ${data.suggestions.map(book => `
+                                <div class="bg-slate-50 rounded-lg p-4 hover:bg-slate-100 transition-colors">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <p class="font-medium text-slate-800 flex-1">${book.filename}</p>
+                                        <button 
+                                            onclick="downloadBook('${book.filename}')"
+                                            class="ml-2 p-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition-colors"
+                                            title="Télécharger"
+                                        >
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div class="flex gap-3 text-xs text-slate-600">
+                                        <span>⭐ ${book.pagerank}</span>
+                                        <span>🔗 ${book.similarity_score}</span>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            } else {
+                html += `
+                    <div class="text-center py-12 text-slate-500">
+                        <div class="text-5xl mb-3">🤔</div>
+                        <p>Aucune suggestion disponible pour cette recherche</p>
+                    </div>
+                `;
+            }
+
+            cards.innerHTML = html;
+        }
+
+        function showError(message) {
+            document.getElementById('resultsHeader').innerHTML = `
+                <div class="bg-red-50 border-2 border-red-200 rounded-xl p-8 text-center">
+                    <div class="text-5xl mb-3">⚠️</div>
+                    <h3 class="text-xl font-medium text-red-800 mb-2">Erreur</h3>
+                    <p class="text-red-600">${message}</p>
+                </div>
+            `;
+        }
+
+        function showLoading(show) {
+            document.getElementById('loading').classList.toggle('hidden', !show);
+        }
+
+        function showResults() {
+            document.getElementById('heroSection').classList.add('hidden');
+            document.getElementById('resultsSection').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function goBack() {
+            document.getElementById('resultsSection').classList.add('hidden');
+            document.getElementById('heroSection').classList.remove('hidden');
+        }
+
+        function getRankingLabel(type) {
+            const labels = {
+                'hybrid': '🎯 Classement Hybride',
+                'occurrences': '📊 Par Occurrences',
+                'pagerank': '⭐ Par PageRank'
+            };
+            return labels[type] || type;
+        }
+
+        // Event Listeners
+        const searchInput = document.getElementById('searchInput');
+
+        searchInput.addEventListener('input', (e) => {
+            handleAutocomplete(e.target.value.trim());
+        });
+
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                search();
+            }
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('#searchInput') && !e.target.closest('#autocompleteDropdown')) {
+                hideAutocomplete();
+            }
+        });
+
+        // Load stats
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_URL}/stats`);
+                const data = await response.json();
+                
+                document.getElementById('statsBar').innerHTML = `
+                    <div class="px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-md text-sm text-slate-600">
+                        📚 <strong>${data.total_books.toLocaleString()}</strong> livres
+                    </div>
+                    <div class="px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-md text-sm text-slate-600">
+                        📖 <strong>${data.vocabulary_size.toLocaleString()}</strong> mots
+                    </div>
+                    <div class="px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-md text-sm text-slate-600">
+                        🔗 <strong>${data.graph_edges.toLocaleString()}</strong> connexions
+                    </div>
+                `;
+            } catch (error) {
+                console.log('Stats loading failed - backend may not be running yet');
+            }
+        }
+
+        loadStats();
+    </script>
+</body>
+</html>

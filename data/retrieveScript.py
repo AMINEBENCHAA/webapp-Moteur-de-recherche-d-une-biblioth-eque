@@ -36,16 +36,10 @@ def extract_title(text):
     else:
         title = None
 
-    # Extraire l'auteur
-    author_match = re.search(r'^Author:\s*(.+)', text, re.MULTILINE)
-    if author_match:
-        author = author_match.group(1).strip()
-    else:
-        author = None
-
+    #
     # Créer un nom de fichier sûr
-    if title and author:
-        filename = f"{author} - {title}.txt"
+    if title :
+        filename = f"{title}"
     elif title:
         filename = title
     else:
@@ -57,7 +51,7 @@ def extract_title(text):
 
     return filename
 count_valid = 0
-book_id = 0
+book_id =1
 
 print("🚀 Début du téléchargement...")
 
@@ -74,7 +68,7 @@ while count_valid < TARGET_BOOKS:
             count_valid += 1
             print(f"📚 Livre {book_id} validé ({word_count} mots) — total : {count_valid}")
 
-    time.sleep(0.4)  # éviter de spam le serveur
+    time.sleep(0.2)  # éviter de spam le serveur
     book_id += 1
 
 print(f"\n🎉 Téléchargement terminé : {count_valid} livres valides.")
