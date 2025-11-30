@@ -1,0 +1,96 @@
+================================================================================
+RAPPORT DE TEST DE PERFORMANCE - MOTEUR DE RECHERCHE
+================================================================================
+
+Date: 2025-11-30 13:00:11
+API URL: http://localhost:5000
+
+1. STATISTIQUES GLOBALES
+--------------------------------------------------------------------------------
+Total de requêtes testées: 23
+Requêtes réussies: 23 (100.0%)
+Requêtes échouées: 0 (0.0%)
+
+2. TEMPS DE RÉPONSE
+--------------------------------------------------------------------------------
+Minimum: 0.001s
+Maximum: 2.354s
+Moyenne: 0.172s
+Médiane: 0.006s
+Écart-type: 0.500s
+
+Percentiles:
+  P50: 0.006s
+  P75: 0.007s
+  P90: 0.451s
+  P95: 0.511s
+  P99: 1.949s
+
+3. PERFORMANCE PAR TYPE DE RECHERCHE
+--------------------------------------------------------------------------------
+
+SIMPLE:
+  Nombre de requêtes: 15
+  Temps moyen: 0.003s
+  Temps min: 0.001s
+  Temps max: 0.007s
+  Écart-type: 0.002s
+
+REGEX:
+  Nombre de requêtes: 5
+  Temps moyen: 0.776s
+  Temps min: 0.202s
+  Temps max: 2.354s
+  Écart-type: 0.891s
+
+SUGGESTIONS:
+  Nombre de requêtes: 3
+  Temps moyen: 0.006s
+  Temps min: 0.006s
+  Temps max: 0.007s
+  Écart-type: 0.000s
+
+4. PERFORMANCE PAR CATÉGORIE
+--------------------------------------------------------------------------------
+
+COMMON:
+  Nombre de requêtes: 5
+  Temps moyen: 0.001s
+  Temps min: 0.001s
+  Temps max: 0.001s
+
+MEDIUM:
+  Nombre de requêtes: 5
+  Temps moyen: 0.007s
+  Temps min: 0.006s
+  Temps max: 0.007s
+
+RARE:
+  Nombre de requêtes: 5
+  Temps moyen: 0.002s
+  Temps min: 0.002s
+  Temps max: 0.002s
+
+COMPLEX:
+  Nombre de requêtes: 5
+  Temps moyen: 0.776s
+  Temps min: 0.202s
+  Temps max: 2.354s
+
+SUGGESTIONS:
+  Nombre de requêtes: 3
+  Temps moyen: 0.006s
+  Temps min: 0.006s
+  Temps max: 0.007s
+
+5. TEST DE CHARGE CONCURRENT
+--------------------------------------------------------------------------------
+Temps total: 0.23s
+Débit: 218.44 requêtes/seconde
+Taux de succès: 100.0%
+
+6. RECOMMANDATIONS
+--------------------------------------------------------------------------------
+✓ Bon: Temps de réponse moyen < 500ms
+
+================================================================================

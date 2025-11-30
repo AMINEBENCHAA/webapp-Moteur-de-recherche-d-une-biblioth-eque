@@ -1,0 +1,257 @@
+{
+  "timestamp": "2025-11-30T12:59:01.779151",
+  "all_results": [
+    {
+      "success": true,
+      "time": 0.001528024673461914,
+      "results_count": 0,
+      "status_code": 200,
+      "query": "the",
+      "category": "common",
+      "type": "simple",
+      "ranking": "hybrid"
+    },
+    {
+      "success": true,
+      "time": 0.0014035701751708984,
+      "results_count": 0,
+      "status_code": 200,
+      "query": "and",
+      "category": "common",
+      "type": "simple",
+      "ranking": "hybrid"
+    },
+    {
+      "success": true,
+      "time": 0.001276254653930664,
+      "results_count": 0,
+      "status_code": 200,
+      "query": "of",
+      "category": "common",
+      "type": "simple",
+      "ranking": "hybrid"
+    },
+    {
+      "success": true,
+      "time": 0.0011906623840332031,
+      "results_count": 0,
+      "status_code": 200,
+      "query": "to",
+      "category": "common",
+      "type": "simple",
+      "ranking": "hybrid"
+    },
+    {
+      "success": true,
+      "time": 0.0014476776123046875,
+      "results_count": 0,
+      "status_code": 200,
+      "query": "in",
+      "category": "common",
+      "type": "simple",
+      "ranking": "hybrid"
+    },
+    {
+      "success": true,
+      "time": 0.00604701042175293,
+      "results_count": 1553,
+      "status_code": 200,
+      "query": "love",
+      "category": "medium",
+      "type": "simple",
+      "ranking": "hybrid"
+    },
+    {
+      "success": true,
+      "time": 0.006254673004150391,
+      "results_count": 1626,
+      "status_code": 200,
+      "query": "time",
+      "category": "medium",
+      "type": "simple",
+      "ranking": "hybrid"
+    },
+    {
+      "success": true,
+      "time": 0.0063626766204833984,
+      "results_count": 1664,
+      "status_code": 200,
+      "query": "life",
+      "category": "medium",
+      "type": "simple",
+      "ranking": "hybrid"
+    },
+    {
+      "success": true,
+      "time": 0.00601506233215332,
+      "results_count": 1561,
+      "status_code": 200,
+      "query": "death",
+      "category": "medium",
+      "type": "simple",
+      "ranking": "hybrid"
+    },
+    {
+      "success": true,
+      "time": 0.00641179084777832,
+      "results_count": 1661,
+      "status_code": 200,
+      "query": "world",
+      "category": "medium",
+      "type": "simple",
+      "ranking": "hybrid"
+    },
+    {
+      "success": true,
+      "time": 0.0023970603942871094,
+      "results_count": 46,
+      "status_code": 200,
+      "query": "quantum",
+      "category": "rare",
+      "type": "simple",
+      "ranking": "hybrid"
+    },
+    {
+      "success": true,
+      "time": 0.0021390914916992188,
+      "results_count": 119,
+      "status_code": 200,
+      "query": "ephemeral",
+      "category": "rare",
+      "type": "simple",
+      "ranking": "hybrid"
+    },
+    {
+      "success": true,
+      "time": 0.0018720626831054688,
+      "results_count": 7,
+      "status_code": 200,
+      "query": "serendipity",
+      "category": "rare",
+      "type": "simple",
+      "ranking": "hybrid"
+    },
+    {
+      "success": true,
+      "time": 0.002871990203857422,
+      "results_count": 326,
+      "status_code": 200,
+      "query": "labyrinth",
+      "category": "rare",
+      "type": "simple",
+      "ranking": "hybrid"
+    },
+    {
+      "success": true,
+      "time": 0.0026559829711914062,
+      "results_count": 256,
+      "status_code": 200,
+      "query": "zenith",
+      "category": "rare",
+      "type": "simple",
+      "ranking": "hybrid"
+    },
+    {
+      "success": true,
+      "time": 0.33243703842163086,
+      "results_count": 1664,
+      "status_code": 200,
+      "query": "^[a-z]{5}$",
+      "category": "complex",
+      "type": "regex",
+      "ranking": "hybrid"
+    },
+    {
+      "success": true,
+      "time": 2.3357045650482178,
+      "results_count": 1664,
+      "status_code": 200,
+      "query": ".*ing$",
+      "category": "complex",
+      "type": "regex",
+      "ranking": "hybrid"
+    },
+    {
+      "success": true,
+      "time": 0.20116066932678223,
+      "results_count": 1654,
+      "status_code": 200,
+      "query": "^qu.*",
+      "category": "complex",
+      "type": "regex",
+      "ranking": "hybrid"
+    },
+    {
+      "success": true,
+      "time": 0.5079085826873779,
+      "results_count": 1664,
+      "status_code": 200,
+      "query": "[aeiou]{3}",
+      "category": "complex",
+      "type": "regex",
+      "ranking": "hybrid"
+    },
+    {
+      "success": true,
+      "time": 0.48286938667297363,
+      "results_count": 1664,
+      "status_code": 200,
+      "query": "^[^aeiou]+$",
+      "category": "complex",
+      "type": "regex",
+      "ranking": "hybrid"
+    },
+    {
+      "success": true,
+      "time": 0.006389617919921875,
+      "results_count": 1574,
+      "status_code": 200,
+      "query": "love",
+      "type": "suggestions"
+    },
+    {
+      "success": true,
+      "time": 0.00673985481262207,
+      "results_count": 1555,
+      "status_code": 200,
+      "query": "time",
+      "type": "suggestions"
+    },
+    {
+      "success": true,
+      "time": 0.0067102909088134766,
+      "results_count": 1545,
+      "status_code": 200,
+      "query": "life",
+      "type": "suggestions"
+    }
+  ],
+  "ranking_comparison": [
+    {
+      "success": true,
+      "time": 0.006095170974731445,
+      "results_count": 1553,
+      "status_code": 200,
+      "ranking": "hybrid"
+    },
+    {
+      "success": true,
+      "time": 0.006330728530883789,
+      "results_count": 1553,
+      "status_code": 200,
+      "ranking": "occurrences"
+    },
+    {
+      "success": true,
+      "time": 0.0060367584228515625,
+      "results_count": 1553,
+      "status_code": 200,
+      "ranking": "pagerank"
+    }
+  ],
+  "concurrent_test": {
+    "total_time": 0.2510402202606201,
+    "throughput": 199.17127203000365,
+    "success_rate": 100.0
+  }
+}
